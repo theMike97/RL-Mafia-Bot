@@ -57,5 +57,11 @@ public class MafiaGame {
     public void calculatePoints() {
         gameStatus = CALCULATING_POINTS;
         System.out.println(gameStatus);
+        // do math here
+        // updated series points:
+        gameStatus = BETWEEN_GAMES;
+//        chooseMafia();
+//        gameStatus = IN_GAME;
+
     }
 }

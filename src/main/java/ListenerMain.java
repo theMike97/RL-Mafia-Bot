@@ -2,8 +2,11 @@ import exceptions.LobbyTooBigException;
 import exceptions.LobbyTooSmallException;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+
+import java.util.List;
 
 public class ListenerMain extends ListenerAdapter {
 
@@ -49,7 +52,7 @@ public class ListenerMain extends ListenerAdapter {
                 curChannel.sendMessage("You are already in the queue!").queue();
                 return;
             }
-            if (qdUsers.size() > qdUsers.getLobbySize()) {
+            if (qdUsers.size() > qdUsers.getLobbySize() - 1) {
                 curChannel.sendMessage("Lobby is full!").queue();
                 return;
             }
@@ -71,6 +74,8 @@ public class ListenerMain extends ListenerAdapter {
             if (!qdUsers.contains(inAuthor)) {
                 curChannel.sendMessage("You are not in the queue!").queue();
                 return;
+            } else if (game.getGameStatus() != game.IN_QUEUE) {
+                curChannel.sendMessage("Cannot leave mid-series").queue();
             }
             qdUsers.remove(inAuthor);
             curChannel.sendMessage("Removed " + inAuthor.getUserInfo().getName()).queue();
@@ -145,8 +150,20 @@ public class ListenerMain extends ListenerAdapter {
         }
         // !g [@user]
         else if (inMessage.getContentRaw().startsWith("!g")) {
-            String mention = inMessage.getContentRaw().split(" ")[1];
-            System.out.println(mention);
+            if (qdUsers.containsUser(inAuthor.getUserInfo()) < 1) {
+                curChannel.sendMessage("Must be in the queue to guess a player").queue();
+                return;
+            }
+            List<User> playersList = inMessage.getMentionedUsers();
+            if (playersList.size() > 1) {
+                curChannel.sendMessage("Guess only one person!");
+                return;
+            }
+            if (qdUsers.containsUser(playersList.get(0)) < 1) {
+                curChannel.sendMessage("Must send message to person in the queue.").queue();
+                return;
+            }
+            curChannel.sendMessage(inAuthor.getUserInfo().getAsTag() + " guessed " + playersList.get(0).getAsTag() + " as mafia!");
         }
         else if (inMessage.getContentRaw().equals("!reveal")) {
             for (Player player : qdUsers) {

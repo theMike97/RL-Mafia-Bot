@@ -47,6 +47,22 @@ public class UsersQueue extends ArrayList<Player> {
         return seriesLength;
     }
 
+    // -1 = error, 0 = false, 1 = true
+    public int containsUser(Object o) {
+        if (o instanceof User) {
+            User user = (User) o;
+//            System.out.println(user);
+            for(Player player : this) {
+//                System.out.println(player.getUserInfo());
+                if (player.getUserInfo().equals(user))
+                    return 1;
+            }
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+
     @Override
     public String toString() {
         String list = "";
