@@ -150,8 +150,12 @@ public class ListenerMain extends ListenerAdapter {
         }
         // !g [@user]
         else if (inMessage.getContentRaw().startsWith("!g")) {
+            if (game.getGameStatus() == game.IN_QUEUE) {
+                curChannel.sendMessage("Cannot guess until the mafia is chosen!");
+                return;
+            }
             if (qdUsers.containsUser(inAuthor.getUserInfo()) < 1) {
-                curChannel.sendMessage("Must be in the queue to guess a player").queue();
+                curChannel.sendMessage("Must be in the queue to guess a player!").queue();
                 return;
             }
             List<User> playersList = inMessage.getMentionedUsers();
@@ -163,7 +167,9 @@ public class ListenerMain extends ListenerAdapter {
                 curChannel.sendMessage("Must send message to person in the queue.").queue();
                 return;
             }
-            curChannel.sendMessage(inAuthor.getUserInfo().getAsTag() + " guessed " + playersList.get(0).getAsTag() + " as mafia!");
+            Player guessedPlayer = user2Player(playersList.get(0));
+            inAuthor.setGuess(guessedPlayer);
+            curChannel.sendMessage(inAuthor.getUserInfo().getAsTag() + " guessed " + inAuthor.getGuess().getUserInfo().getAsTag() + " as mafia!").queue();
         }
         else if (inMessage.getContentRaw().equals("!reveal")) {
             for (Player player : qdUsers) {
@@ -196,4 +202,11 @@ public class ListenerMain extends ListenerAdapter {
         // no base case
     }
 
+    private Player user2Player(User user) {
+        for (Player player : qdUsers) {
+            if (player.getUserInfo().equals(user))
+                return player;
+        }
+        return null;
+    }
 }
