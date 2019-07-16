@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListenerMain extends ListenerAdapter {
@@ -16,7 +17,7 @@ public class ListenerMain extends ListenerAdapter {
     public ListenerMain() {
         super();
         qdUsers = new UsersQueue(6, 5);
-        game = new MafiaGame();
+        game = new MafiaGame(qdUsers);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class ListenerMain extends ListenerAdapter {
         }
         // !q
         else if (inMessage.getContentRaw().equals("!q")) {
-            if (qdUsers.contains(inAuthor)) {
+            if (qdUsers.containsUser(inAuthor.getUserInfo()) == 1) {
                 curChannel.sendMessage("You are already in the queue!").queue();
                 return;
             }
@@ -60,7 +61,26 @@ public class ListenerMain extends ListenerAdapter {
             curChannel.sendMessage("Added " + inAuthor.getUserInfo().getName()).queue();
             if (qdUsers.size() == qdUsers.getLobbySize()) {
                 qdUsers.setPartyFull(true);
-                curChannel.sendMessage("Queue is now full!  Choosing mafia...").queue();
+//                curChannel.sendMessage("Queue is now full!  Choosing mafia...").queue();
+                curChannel.sendMessage("Queue is now full!  Randomly assigning teams.\n").queue();
+                ArrayList<Player>[] teams = game.chooseTeams(game.RANDOM_TEAMS);
+
+                // string for team 1
+                String team1 = "";
+                for(Player player : teams[0]) {
+                    team1 += ", " + player.getUserInfo().getAsTag();
+                }
+                team1.substring(2);
+                curChannel.sendMessage("Team 1:\n\t" + team1).queue();
+
+                // string for team 2
+                String team2 = "";
+                for(Player player : teams[1]) {
+                    team2 += ", " + player.getUserInfo().getAsTag();
+                }
+                team2.substring(2);
+                curChannel.sendMessage("Team 2:\n\t" + team2).queue();
+
                 game.startSeries(qdUsers.getSeriesLength(), qdUsers);
                 game.chooseMafia();
                 return;
