@@ -1,0 +1,33 @@
+Firebase collections map for Mafia bot
+
+// collection which organizes stats by discord server
+Collection::Servers:
+	Document::Server:
+		Field::ID: int // PK
+		Collection::Players // should be sorted
+			Document::Player
+				Field::DiscordID: String // PK
+				Field::GameWins: int
+				Field::SeriesWins: int
+				Field::TotalPoints: int
+
+			Document::Player
+				Field: ...
+
+	Document::Server:
+		Field: ...
+		...
+
+
+// collection for everyone
+// documents should be sorted
+Collection::Players:
+	Document::Player:
+		Field::DiscordID: String // PK
+		Field::GameWins: int
+		Field::SeriesWin: int
+		Field::TotalPoints: int
+
+	Document::Player:
+		Field: ...
+		...

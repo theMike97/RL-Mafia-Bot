@@ -1,3 +1,4 @@
+import com.google.firebase.cloud.FirestoreClient;
 import exceptions.LobbyTooBigException;
 import exceptions.LobbyTooSmallException;
 import net.dv8tion.jda.core.entities.Message;
@@ -5,19 +6,32 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+
 
 public class ListenerMain extends ListenerAdapter {
 
     private UsersQueue qdUsers;
     private MafiaGame game;
+    private GoogleCredentials credentials;
+    private FirebaseOptions options;
+    private Firestore firedb;
 
-    public ListenerMain() {
+    public ListenerMain() throws IOException {
         super();
         qdUsers = new UsersQueue(6, 5);
         game = new MafiaGame(qdUsers);
+        initFirebase("rl-mafia-bot");
     }
 
     @Override
@@ -222,11 +236,23 @@ public class ListenerMain extends ListenerAdapter {
         // no base case
     }
 
+    @Nullable
     private Player user2Player(User user) {
         for (Player player : qdUsers) {
             if (player.getUserInfo().equals(user))
                 return player;
         }
         return null;
+    }
+
+    private void initFirebase(String projectId) throws IOException{
+        credentials = GoogleCredentials.getApplicationDefault();
+        options = new FirebaseOptions.Builder()
+                .setCredentials(credentials)
+                .setProjectId(projectId)
+                .build();
+        FirebaseApp.initializeApp(options);
+        firedb = FirestoreClient.getFirestore();
+
     }
 }
