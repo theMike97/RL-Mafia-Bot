@@ -47,27 +47,53 @@ public class UsersQueue extends ArrayList<Player> {
         return seriesLength;
     }
 
-    // -1 = error, 0 = false, 1 = true
-    public int containsUser(Object o) {
-        if (o instanceof User) {
-            User user = (User) o;
-//            System.out.println(user);
-            for(Player player : this) {
+    private boolean containsUser(User user) {
+
+        for (Player player : this) {
 //                System.out.println(player.getUserInfo());
-                if (player.getUserInfo().equals(user))
-                    return 1;
-            }
-            return 0;
-        } else {
-            return -1;
+            if (player.getUser().equals(user)) return true;
         }
+        return false;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        if (o != null) {
+            int pos = indexOf(o);
+            if (pos != -1)
+                return super.remove(pos) != null;
+        }
+        return false;
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        if (o != null) {
+            User user;
+            if (o instanceof Player) user = ((Player) o).getUser();
+            else if (o instanceof User) user = (User) o;
+            else return -1;
+
+            for (int i = 0; i < size(); i++)
+                if (get(i).getUser().equals(user)) return i;
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        if (o != null) {
+            if (o instanceof Player) return containsUser(((Player) o).getUser());
+            if (o instanceof User) return containsUser((User) o);
+        }
+        return false;
     }
 
     @Override
     public String toString() {
         String list = "";
         for (Player player : this)
-            list += ", " + player.getUserInfo().getAsTag();
+            list += ", " + player.getUser().getAsTag();
 
         list = list.substring(2);
 

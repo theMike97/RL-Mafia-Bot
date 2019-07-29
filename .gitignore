@@ -4,6 +4,9 @@
 # Ignore Main.java for security reasons - the class is done anyway
 /src/main/java/Main.java
 
+# Ignore server/*.json
+/server/*.json
+
 # Ignore Gradle GUI config
 gradle-app.setting
 

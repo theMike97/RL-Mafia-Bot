@@ -14,7 +14,7 @@ public class Player {
         points = 0;
     }
 
-    public User getUserInfo() {
+    public User getUser() {
         return user;
     }
 
@@ -40,5 +40,12 @@ public class Player {
 
     public int getPoints() {
         return points;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o != null)
+            if (o instanceof User) return user.equals(o);
+        return false;
     }
 }

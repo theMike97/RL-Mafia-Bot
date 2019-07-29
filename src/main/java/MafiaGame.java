@@ -60,12 +60,12 @@ public class MafiaGame {
             while (draft.size() > 0) {
                 playerIndex = rand.nextInt(draft.size());
                 team1.add(draft.get(playerIndex));
-                System.out.println(team1.get(index).getUserInfo().getAsTag());
+                System.out.println(team1.get(index).getUser().getAsTag());
                 draft.remove(playerIndex);
 
                 playerIndex = rand.nextInt(draft.size());
                 team2.add(draft.get(playerIndex));
-                System.out.println(team2.get(index).getUserInfo().getAsTag());
+                System.out.println(team2.get(index).getUser().getAsTag());
                 draft.remove(playerIndex);
 
                 index++;
@@ -86,7 +86,14 @@ public class MafiaGame {
                 else q.get(i).setMafia(true);
             }
             System.out.println("Index was: " + index);
-            System.out.println("Mafia is: " + q.get(index).getUserInfo().getAsTag());
+            System.out.println("Mafia is: " + q.get(index).getUser().getAsTag());
+
+            for (Player player : q) {
+                String message = (player.isMafia()) ? "Shhhh!  You are the mafia!" : "You are a villager!";
+                player.getUser().openPrivateChannel().queue((channel) ->
+                        channel.sendMessage(message).queue());
+            }
+
         } else {
             throw new NullPointerException("Queue is null!");
         }

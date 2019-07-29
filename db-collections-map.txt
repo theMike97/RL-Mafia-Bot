@@ -2,11 +2,9 @@ Firebase collections map for Mafia bot
 
 // collection which organizes stats by discord server
 Collection::Servers:
-	Document::Server:
-		Field::ID: int // PK
-		Collection::Players // should be sorted
-			Document::Player
-				Field::DiscordID: String // PK
+	Document::ServerCollection: (serverID)
+		Collection::Players // query should be sorted
+			Document::Player (DiscordID)
 				Field::GameWins: int
 				Field::SeriesWins: int
 				Field::TotalPoints: int
@@ -14,20 +12,19 @@ Collection::Servers:
 			Document::Player
 				Field: ...
 
-	Document::Server:
+	Document::ServerCollection:
 		Field: ...
 		...
 
 
 // collection for everyone
 // documents should be sorted
-Collection::Players:
-	Document::Player:
-		Field::DiscordID: String // PK
+Collection::AllPlayers:
+	Document::Player: (DiscordID)
 		Field::GameWins: int
 		Field::SeriesWin: int
 		Field::TotalPoints: int
 
-	Document::Player:
+	Document::Player: 
 		Field: ...
 		...
