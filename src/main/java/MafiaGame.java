@@ -50,12 +50,14 @@ public class MafiaGame {
         return gameStatus;
     }
 
-    public UsersQueue sortQueue() {
+    public UsersQueue sortQueueByTeam() {
         UsersQueue temp = q;
+        temp.clear();
 
-        for (int i = 0; i < q.size(); i++) {
+        temp.addAll(team1);
+        temp.addAll(team2);
 
-        }
+        return temp;
     }
 
     public ArrayList<Player>[] chooseTeams(int random) {

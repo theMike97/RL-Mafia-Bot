@@ -126,8 +126,7 @@ public class ListenerMain extends ListenerAdapter {
                     curChannel.sendMessage("**Team 2:**\n" + team2).queue();
                     curChannel.sendMessage("React to vote.").queue(
                             message -> {
-                                qdUsers.sort();
-                                mrl.retrieveQdUsers(qdUsers);
+                                mrl.retrieveQdUsers(game.sortQueueByTeam());
                             }
                     );
 
