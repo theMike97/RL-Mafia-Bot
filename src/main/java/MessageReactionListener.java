@@ -15,13 +15,13 @@ public class MessageReactionListener extends ListenerAdapter {
     private int lobbysize = 6;
     private UsersQueue q = null;
     private static String[] EMOTE_LIST = new String[]{
-            "\uD83C\uDDE6",
-            "\uD83C\uDDE7",
-            "\uD83C\uDDE8",
-            "\uD83C\uDDE9",
-            "\uD83C\uDDEA",
-            "\uD83C\uDDEB",
-            "\uD83C\uDDEC"
+            "\uD83C\uDDE6", //A
+            "\uD83C\uDDE7", //B
+            "\uD83C\uDDE8", //C
+            "\uD83C\uDDE9", //D
+            "\uD83C\uDDEA", //E
+            "\uD83C\uDDEB", //F
+            "\uD83C\uDDEC"  //G
     };
 
 
