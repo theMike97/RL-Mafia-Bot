@@ -50,6 +50,14 @@ public class MafiaGame {
         return gameStatus;
     }
 
+    public UsersQueue sortQueue() {
+        UsersQueue temp = q;
+
+        for (int i = 0; i < q.size(); i++) {
+
+        }
+    }
+
     public ArrayList<Player>[] chooseTeams(int random) {
         for(Player player : q)
             draft.add(player);
@@ -60,6 +68,7 @@ public class MafiaGame {
             while (draft.size() > 0) {
                 playerIndex = rand.nextInt(draft.size());
                 team1.add(draft.get(playerIndex));
+
                 System.out.println(team1.get(index).getUser().getAsTag());
                 draft.remove(playerIndex);
 
@@ -97,6 +106,10 @@ public class MafiaGame {
         } else {
             throw new NullPointerException("Queue is null!");
         }
+    }
+
+    public static void submitVote() {
+        System.out.println("command received!  submitting votes");
     }
 
     public void calculatePoints() {

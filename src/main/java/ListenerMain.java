@@ -8,7 +8,10 @@ import exceptions.LobbyTooSmallException;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.core.events.message.react.GenericMessageReactionEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.events.message.react.MessageReactionAddEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -26,6 +29,7 @@ import com.google.firebase.FirebaseOptions;
 
 public class ListenerMain extends ListenerAdapter {
 
+    private MessageReactionListener mrl;
     private UsersQueue qdUsers;
     private MafiaGame game;
     private String[] voteList;
@@ -36,18 +40,19 @@ public class ListenerMain extends ListenerAdapter {
     private Firestore firedb;
     private String serverID;
 
-    public ListenerMain() throws IOException {
+    public ListenerMain(MessageReactionListener mrl) throws IOException {
         super();
+        this.mrl = mrl;
         qdUsers = new UsersQueue(6, 5);
         game = new MafiaGame(qdUsers);
         voteList = new String[]{
-                "regional_indicator_a",
-                "regional_indicator_b",
-                "regional_indicator_c",
-                "regional_indicator_d",
-                "regional_indicator_e",
-                "regional_indicator_f",
-                "regional_indicator_b"
+                ":regional_indicator_a:",
+                ":regional_indicator_b:",
+                ":regional_indicator_c:",
+                ":regional_indicator_d:",
+                ":regional_indicator_e:",
+                ":regional_indicator_f:",
+                ":regional_indicator_b:"
         };
 //        initFirebase("rl-mafia-bot");
 //        serverID = "";
@@ -98,7 +103,7 @@ public class ListenerMain extends ListenerAdapter {
                 qdUsers.setPartyFull(true);
 //                curChannel.sendMessage("Queue is now full!  Choosing mafia...").queue();
                 curChannel.sendMessage("Queue is now full!  Randomly assigning teams.\n").queue();
-                if (qdUsers.getLobbySize() > 1) {
+                if (qdUsers.getLobbySize() > 1) { // testing only
                     ArrayList<Player>[] teams = game.chooseTeams(game.RANDOM_TEAMS);
 
                     // string for team 1
@@ -119,11 +124,19 @@ public class ListenerMain extends ListenerAdapter {
                     }
 //                    team2.substring(2);
                     curChannel.sendMessage("**Team 2:**\n" + team2).queue();
-                    curChannel.sendMessage("React to vote.").queue();
+                    curChannel.sendMessage("React to vote.").queue(
+                            message -> {
+                                qdUsers.sort();
+                                mrl.retrieveQdUsers(qdUsers);
+                            }
+                    );
 
                     game.startSeries(qdUsers.getSeriesLength(), qdUsers);
                 }
                 game.chooseMafia();
+
+                //voting reactions
+
 
                 return;
             }
@@ -167,7 +180,11 @@ public class ListenerMain extends ListenerAdapter {
                     game.startSeries(qdUsers.getSeriesLength(), qdUsers);
                     game.chooseMafia();
                 } else {
-                    curChannel.sendMessage("Lobby size is now " + qdUsers.getLobbySize() + "!  The mafia will be chosen once " + qdUsers.getFreeSpaces() + " more people have queued.").queue();
+                    curChannel.sendMessage("Lobby size is now " + qdUsers.getLobbySize() + "!  The mafia will be chosen once " + qdUsers.getFreeSpaces() + " more people have queued.").queue(
+                            message -> {
+                                mrl.retrieveLobbySize(qdUsers.getLobbySize());
+                            }
+                    );
                 }
             } catch (NumberFormatException e) {
                 curChannel.sendMessage("Uh oh!  There's something wrong with this command!").queue();
