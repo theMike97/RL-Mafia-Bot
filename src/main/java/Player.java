@@ -34,6 +34,10 @@ public class Player {
         return guess;
     }
 
+    public boolean hasGuessed() {
+        return guess == null;
+    }
+
     public void setPoints(int points) {
         this.points = points;
     }

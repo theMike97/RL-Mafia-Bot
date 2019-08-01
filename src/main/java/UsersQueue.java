@@ -93,7 +93,7 @@ public class UsersQueue extends ArrayList<Player> {
     public String toString() {
         String list = "";
         for (Player player : this)
-            list += ", " + player.getUser().getAsTag();
+            list += ", " + player.getUser().getName();
 
         list = list.substring(2);
 
